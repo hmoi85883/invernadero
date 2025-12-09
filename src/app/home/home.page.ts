@@ -5,10 +5,14 @@ import { DataService } from '../services/data.service';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonCard, 
   IonButton, IonIcon, IonFab, IonFabButton, IonButtons, 
-  IonRippleEffect, IonBadge // <--- AGREGADOS
+  IonRippleEffect, IonBadge 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, trash, person, locationOutline, trashOutline } from 'ionicons/icons';
+// 👇 IMPORTAMOS LOS ICONOS DE SENSORES QUE FALTABAN
+import { 
+  add, trash, person, locationOutline, trashOutline,
+  thermometer, water, sunny, hardwareChip 
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
@@ -19,15 +23,18 @@ import { add, trash, person, locationOutline, trashOutline } from 'ionicons/icon
     CommonModule, RouterModule, 
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonCard, 
     IonButton, IonIcon, IonFab, IonFabButton, IonButtons,
-    IonRippleEffect, IonBadge // <--- AGREGADOS AQUÍ TAMBIÉN
+    IonRippleEffect, IonBadge
   ]
 })
 export class HomePage {
   intervalo: any;
 
   constructor(public data: DataService, private router: Router) { 
-    // Agregamos los iconos nuevos del diseño
-    addIcons({ add, trash, person, 'location-outline': locationOutline, 'trash-outline': trashOutline }); 
+    // 👇 REGISTRAMOS TODOS LOS ICONOS AQUÍ
+    addIcons({ 
+      add, trash, person, 'location-outline': locationOutline, 'trash-outline': trashOutline,
+      thermometer, water, sunny, 'hardware-chip': hardwareChip
+    }); 
   }
 
   ionViewDidEnter() {
@@ -38,15 +45,11 @@ export class HomePage {
   ionViewWillLeave() { clearInterval(this.intervalo); }
 
   irDetalle(id: any) { this.router.navigate(['/detalle', id]); }
-
-  // --- FUNCIONES QUE FALTABAN (Puentes al servicio) ---
   
-  agregar() {
-    this.data.solicitarNuevo();
-  }
+  agregar() { this.data.solicitarNuevo(); }
 
   borrar(event: Event, id: any) {
-    event.stopPropagation(); // Evita entrar al detalle al hacer click en borrar
+    event.stopPropagation();
     this.data.borrarInvernadero(id);
   }
 }
