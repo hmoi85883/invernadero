@@ -1,27 +1,61 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Dashboard</ion-title>
-    <ion-buttons slot="end"><ion-button routerLink="/perfil"><ion-icon name="person-circle" slot="icon-only"></ion-icon></ion-button></ion-buttons>
+    <ion-title style="font-size: 22px; padding-left: 10px;">Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/perfil" style="background: #2c2c2c; border-radius: 50%; width: 40px; height: 40px; margin-right: 10px;">
+        <ion-icon name="person" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2>Hola, {{ data.usuario }}</h2>
-  <ion-list>
-    <ion-card *ngFor="let inv of data.invernaderos" (click)="irDetalle(inv.id)">
-      <ion-card-header>
-        <ion-card-title>{{ inv.nombre }}</ion-card-title>
-        <ion-card-subtitle>{{ inv.estado }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        Sensores: {{ inv.sensores.length }}
-        <ion-button fill="clear" color="danger" (click)="$event.stopPropagation(); data.borrarInvernadero(inv.id)">
-          <ion-icon name="trash" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-card-content>
-    </ion-card>
-  </ion-list>
+
+  <div style="margin-bottom: 20px; padding-left: 5px;">
+    <p style="margin: 0; color: #888;">Bienvenido de nuevo,</p>
+    <h2 style="margin: 5px 0 0; font-size: 24px;">{{ data.usuario }}</h2>
+  </div>
+
+  <div *ngFor="let inv of data.invernaderos" (click)="irDetalle(inv.id)" class="premium-card ion-activatable ripple-parent">
+    <ion-ripple-effect></ion-ripple-effect>
+    
+    <div style="padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div>
+          <h3 style="margin: 0; font-size: 18px; color: white;">{{ inv.nombre }}</h3>
+          <span style="font-size: 12px; color: #666; display: flex; align-items: center; margin-top: 4px;">
+            <ion-icon name="location-outline" style="margin-right: 4px;"></ion-icon> {{ inv.ubicacion }}
+          </span>
+        </div>
+        <div style="text-align: right;">
+           <ion-badge [color]="inv.estado === 'ONLINE' ? 'primary' : 'danger'" style="padding: 6px 10px; border-radius: 6px;">{{ inv.estado }}</ion-badge>
+        </div>
+      </div>
+
+      <div style="height: 1px; background: #333; margin-bottom: 15px;"></div>
+
+      <div style="display: flex; gap: 15px;">
+        <div *ngFor="let s of inv.sensores.slice(0, 2)" style="display: flex; align-items: center;">
+          <ion-icon [name]="data.analizarSensor(s.nombre, s.valor).icono" [color]="data.analizarSensor(s.nombre, s.valor).color" style="font-size: 18px; margin-right: 8px;"></ion-icon>
+          <span style="color: #ddd; font-weight: 500;">{{ s.valor }}</span>
+        </div>
+        <div *ngIf="inv.sensores.length > 2" style="color: #666; font-size: 12px; align-self: center;">
+          +{{ inv.sensores.length - 2 }} más
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #252525; padding: 10px 20px; display: flex; justify-content: flex-end; border-top: 1px solid #333;">
+       <ion-button fill="clear" color="medium" size="small" (click)="borrar($event, inv.id)">
+         <ion-icon name="trash-outline" slot="icon-only" style="font-size: 18px;"></ion-icon>
+       </ion-button>
+    </div>
+  </div>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="data.solicitarNuevo()"><ion-icon name="add"></ion-icon></ion-fab-button>
+    <ion-fab-button (click)="agregar()" color="primary" style="--box-shadow: 0 0 20px rgba(0, 212, 98, 0.4);">
+      <ion-icon name="add" style="color: black;"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
+
 </ion-content>

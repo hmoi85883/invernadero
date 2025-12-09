@@ -1,30 +1,66 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start"><ion-back-button defaultHref="/home"></ion-back-button></ion-buttons>
-    <ion-title>{{ data.invernaderoActual?.nombre }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" color="light" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-size: 18px;">{{ data.invernaderoActual?.nombre }}</ion-title>
   </ion-toolbar>
-  <ion-toolbar>
-    <ion-segment [(ngModel)]="seccion">
-      <ion-segment-button value="monitor"><ion-label>Monitor</ion-label></ion-segment-button>
-      <ion-segment-button value="graficas"><ion-label>Gráficas</ion-label></ion-segment-button>
+  
+  <div style="padding: 0 16px 16px;">
+    <ion-segment [(ngModel)]="seccion" value="monitor" style="background: #1e1e1e; border-radius: 8px; padding: 4px;">
+      <ion-segment-button value="monitor" style="--indicator-color: #333; --color: #888; --color-checked: white;">
+        <ion-label>Monitor</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="graficas" style="--indicator-color: #333; --color: #888; --color-checked: white;">
+        <ion-label>Gráficas</ion-label>
+      </ion-segment-button>
     </ion-segment>
-  </ion-toolbar>
+  </div>
 </ion-header>
 
 <ion-content class="ion-padding">
+
   <div *ngIf="data.invernaderoActual && seccion === 'monitor'">
-    <ion-list>
-      <ion-item *ngFor="let s of data.invernaderoActual.sensores" (click)="data.editarSensor(s)">
-        <ion-icon [name]="data.analizarSensor(s.nombre, s.valor).icono" [color]="data.analizarSensor(s.nombre, s.valor).color" slot="start"></ion-icon>
-        <ion-label>
-          <h2>{{ s.nombre }}</h2>
-          <p>{{ s.valor }}</p>
-        </ion-label>
-        <ion-icon name="create" slot="end"></ion-icon>
-      </ion-item>
-    </ion-list>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+      
+      <div *ngFor="let s of data.invernaderoActual.sensores" 
+           (click)="data.editarSensor(s)" 
+           class="premium-card ion-activatable ripple-parent"
+           style="margin: 0; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px;">
+        <ion-ripple-effect></ion-ripple-effect>
+
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div [style.background]="'rgba(255,255,255,0.05)'" style="padding: 10px; border-radius: 10px;">
+             <ion-icon [name]="data.analizarSensor(s.nombre, s.valor).icono" [color]="data.analizarSensor(s.nombre, s.valor).color" style="font-size: 24px;"></ion-icon>
+          </div>
+          <ion-icon name="create-outline" color="medium" style="font-size: 16px; opacity: 0.5;"></ion-icon>
+        </div>
+
+        <div>
+          <h2 style="font-size: 26px; font-weight: 700; margin: 0; color: white;">{{ s.valor }}</h2>
+          <p style="font-size: 12px; margin: 5px 0 0; text-transform: uppercase; color: #888; letter-spacing: 0.5px;">{{ s.nombre }}</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <ion-button fill="outline" color="medium" style="--border-radius: 20px; opacity: 0.6;">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Agregar Sensor
+      </ion-button>
+    </div>
+
   </div>
+
   <div *ngIf="seccion === 'graficas'">
-    <p class="ion-text-center">Gráficas próximamente...</p>
+    <div class="premium-card" style="padding: 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+      <div class="ion-text-center">
+        <ion-icon name="bar-chart-outline" style="font-size: 60px; color: #333; margin-bottom: 10px;"></ion-icon>
+        <p>Visualización de datos<br>próximamente</p>
+      </div>
+    </div>
   </div>
+
 </ion-content>

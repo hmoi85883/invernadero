@@ -1,2 +1,63 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+/* Tema Premium Slate (Gris Elegante) */
+:root {
+  /* Primary: Verde Neón Suave (Tecnológico) */
+  --ion-color-primary: #00d462;
+  --ion-color-primary-rgb: 0, 212, 98;
+  --ion-color-primary-contrast: #000000;
+  --ion-color-primary-contrast-rgb: 0, 0, 0;
+  --ion-color-primary-shade: #00bb56;
+  --ion-color-primary-tint: #1ad872;
+
+  /* Fondos Oscuros (Forzados) */
+  --ion-background-color: #121212; /* Negro casi puro */
+  --ion-background-color-rgb: 18, 18, 18;
+  
+  --ion-text-color: #e0e0e0; /* Blanco suave */
+  --ion-text-color-rgb: 224, 224, 224;
+
+  --ion-item-background: #1e1e1e; /* Gris oscuro para listas */
+  --ion-card-background: #1e1e1e; /* Gris oscuro para tarjetas */
+  
+  /* Bordes sutiles */
+  --ion-border-color: #333333;
+}
+
+/* Estilos Globales de Elegancia */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Tarjeta Premium */
+.premium-card {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+/* Inputs minimalistas oscuros */
+.dark-input {
+  --background: #2c2c2c;
+  --color: white;
+  --placeholder-color: #888;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #333;
+}
+
+/* Encabezados limpios */
+ion-toolbar {
+  --background: #121212;
+  --border-width: 0;
+  --color: white;
+}
+
+ion-content {
+  --background: #121212;
+}
+
+/* Textos */
+h1, h2, h3 { color: white; font-weight: 600; }
+p, small { color: #aaa; }

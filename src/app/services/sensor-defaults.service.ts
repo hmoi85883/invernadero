@@ -51,6 +51,7 @@ export class SensorDefaultsService {
         valor: s.valor,
         min: s.min,
         max: s.max
+        
       }))
     };
   }
