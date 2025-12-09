@@ -8,7 +8,7 @@ import { SensorDefaultsService } from '../services/sensor-defaults.service';
   providedIn: 'root'
 })
 export class DataService {
-  
+
   // Variables públicas
   usuario: string = '';
   rol: string = '';
@@ -16,7 +16,7 @@ export class DataService {
   invernaderoActual: any = null;
 
   // 👇 TU LINK DE RENDER (Verifica que sea el correcto)
-  private baseUrl = 'https://apiinicial.onrender.com'; 
+  private baseUrl = 'https://apiinicial.onrender.com';
 
   constructor(
     private http: HttpClient,
@@ -29,7 +29,7 @@ export class DataService {
   // --- LOGIN ---
   iniciarSesion(user: string, pass: string) {
     if (!user || !pass) { this.toast('Faltan datos'); return; }
-    
+
     this.http.get<any[]>(`${this.baseUrl}/usuarios`).subscribe({
       next: (usuarios) => {
         const u = usuarios.find(x => x.usuario === user && x.password === pass);
@@ -69,7 +69,7 @@ export class DataService {
       { name: 'nombre', type: 'text', placeholder: 'Nombre' },
       { name: 'ubicacion', type: 'text', placeholder: 'Ubicación' }
     ];
-    
+
     tipos.forEach((t: any) => {
       inputs.push({ name: 'tipo', type: 'radio', label: t.nombre, value: t.valor, checked: t.valor === 'tradicional' });
     });
@@ -79,19 +79,21 @@ export class DataService {
       inputs: inputs,
       buttons: [
         { text: 'Cancelar' },
-        { text: 'Crear', handler: (d: any) => {
-            if(!d.nombre) return;
+        {
+          text: 'Crear', handler: (d: any) => {
+            if (!d.nombre) return;
             const nuevo = this.defaults.crearInvernadero(d.nombre, d.tipo);
             nuevo.ubicacion = d.ubicacion || 'Sin definir';
             this.http.post(`${this.baseUrl}/invernaderos`, nuevo).subscribe(() => this.cargarInvernaderos());
-        }}
+          }
+        }
       ]
     });
     await a.present();
   }
 
   // --- DETALLE ---
-  
+
   // ✅ ESTA ES LA FUNCIÓN QUE TE FALTABA
   cargarUnico(id: any) {
     this.http.get<any>(`${this.baseUrl}/invernaderos/${id}`).subscribe(d => this.invernaderoActual = d);
@@ -110,7 +112,8 @@ export class DataService {
       ],
       buttons: [
         { text: 'Cancelar' },
-        { text: 'Agregar', handler: (d: any) => {
+        {
+          text: 'Agregar', handler: (d: any) => {
             if (!d.nombre || !d.valor) {
               this.toast('Datos incompletos');
               return false;
@@ -122,14 +125,55 @@ export class DataService {
               max: d.max || 100
             };
             this.invernaderoActual.sensores.push(nuevoSensor);
-            
+
             this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual)
               .subscribe({
                 next: () => this.toast('Sensor agregado'),
                 error: () => this.invernaderoActual.sensores.pop()
               });
             return true;
-        }}
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+  async editarInvernadero() {
+    if (!this.invernaderoActual) return;
+
+    const alert = await this.alertCtrl.create({
+      header: 'Editar Invernadero',
+      inputs: [
+        { 
+          name: 'nombre', 
+          type: 'text', 
+          value: this.invernaderoActual.nombre, 
+          placeholder: 'Nombre' 
+        },
+        { 
+          name: 'ubicacion', 
+          type: 'text', 
+          value: this.invernaderoActual.ubicacion, 
+          placeholder: 'Ubicación' 
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { 
+          text: 'Guardar', 
+          handler: (d) => {
+            // Actualizamos el objeto local
+            this.invernaderoActual.nombre = d.nombre;
+            this.invernaderoActual.ubicacion = d.ubicacion;
+
+            // Guardamos en la API
+            this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual)
+              .subscribe({
+                next: () => this.toast('Información actualizada'),
+                error: () => this.toast('Error al actualizar')
+              });
+          }
+        }
       ]
     });
     await alert.present();
@@ -145,15 +189,17 @@ export class DataService {
       ],
       buttons: [
         { text: 'Cancelar' },
-        { text: 'Guardar', handler: (d: any) => {
+        {
+          text: 'Guardar', handler: (d: any) => {
             sensor.valor = d.val;
             sensor.min = d.min;
             sensor.max = d.max;
-            
+
             this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual).subscribe(() => {
               this.toast('Actualizado');
             });
-        }}
+          }
+        }
       ]
     });
     await a.present();
@@ -177,9 +223,51 @@ export class DataService {
     const t = await this.toastCtrl.create({ message: msg, duration: 2000, position: 'bottom' });
     await t.present();
   }
-  
+
   async alerta(h: string, m: string) {
     const a = await this.alertCtrl.create({ header: h, message: m, buttons: ['OK'] });
     await a.present();
+  }
+  // --- EDICIÓN DE PERFIL ---
+  async editarPerfil() {
+    const alert = await this.alertCtrl.create({
+      header: 'Editar Perfil',
+      inputs: [
+        {
+          name: 'nombre',
+          type: 'text',
+          value: this.usuario, // Pre-llenamos con el dato actual
+          placeholder: 'Tu Nombre'
+        },
+        {
+          name: 'rol',
+          type: 'text',
+          value: this.rol,
+          placeholder: 'Cargo (ej: Supervisor)'
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Guardar',
+          handler: (d) => {
+            if (!d.nombre || !d.rol) {
+              this.toast('Los campos no pueden estar vacíos');
+              return false;
+            }
+            // Actualizamos las variables locales
+            this.usuario = d.nombre;
+            this.rol = d.rol;
+
+            // Opcional: Aquí podrías hacer una petición PUT a tu API para guardar cambios reales
+            // this.http.put(...)
+
+            this.toast('Perfil actualizado');
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }

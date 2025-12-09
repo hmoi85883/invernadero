@@ -3,21 +3,28 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" color="light" icon="arrow-back-outline"></ion-back-button>
     </ion-buttons>
+
     <ion-title style="font-size: 18px;">{{ data.invernaderoActual?.nombre }}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="data.editarInvernadero()">
+        <ion-icon name="settings-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <div style="padding: 0 16px 16px;">
     <ion-segment [(ngModel)]="seccion" (ionChange)="segmentChanged($event)" mode="ios"
       style="background: #1e1e1e; border-radius: 8px; padding: 4px;">
-      
+
       <ion-segment-button value="monitor" style="--indicator-color: #333; --color: #888; --color-checked: white;">
         <ion-label>Monitor</ion-label>
       </ion-segment-button>
-      
+
       <ion-segment-button value="graficas" style="--indicator-color: #333; --color: #888; --color-checked: white;">
         <ion-label>Gráficas</ion-label>
       </ion-segment-button>
-      
+
     </ion-segment>
   </div>
 </ion-header>
@@ -52,7 +59,7 @@
     </div>
 
     <div style="margin-top: 20px; text-align: center;">
-      <ion-button fill="outline" color="medium" (click)="data.solicitarNuevoSensor()" 
+      <ion-button fill="outline" color="medium" (click)="data.solicitarNuevoSensor()"
         style="--border-radius: 20px; opacity: 0.6;">
         <ion-icon name="add" slot="start"></ion-icon>
         Agregar Sensor

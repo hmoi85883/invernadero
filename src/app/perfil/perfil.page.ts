@@ -3,13 +3,14 @@ import { DataService } from '../services/data.service';
 import { 
   IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, 
   IonContent, IonItem, IonLabel, IonButton, IonIcon, 
-  IonAvatar, IonBadge, IonList, IonNote, IonToggle // <--- Componentes nuevos
+  IonAvatar, IonBadge, IonList, IonNote, IonToggle 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
+// 👇 Importamos TODOS los iconos necesarios
 import { 
   person, personOutline, shieldCheckmarkOutline, 
   mailOutline, logOutOutline, arrowBackOutline, 
-  notificationsOutline // <--- Iconos nuevos
+  notificationsOutline, createOutline // <--- ¡ESTE ES EL IMPORTANTE!
 } from 'ionicons/icons';
 
 @Component({
@@ -32,7 +33,8 @@ export class PerfilPage {
       'mail-outline': mailOutline,
       'log-out-outline': logOutOutline,
       'arrow-back-outline': arrowBackOutline,
-      'notifications-outline': notificationsOutline
+      'notifications-outline': notificationsOutline,
+      'create-outline': createOutline // <--- ¡REGISTRADO AQUÍ!
     });
   }
 }
