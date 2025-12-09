@@ -14,8 +14,12 @@ export class DataService {
   rol: string = '';
   invernaderos: any[] = [];
   invernaderoActual: any = null;
+  notificaciones: any[] = [];
+  
+  // 👇 1. NUEVA VARIABLE DE CONTROL
+  notificacionesActivas: boolean = true; 
 
-  // 👇 TU LINK DE RENDER (Verifica que sea el correcto)
+  // 👇 TU LINK DE RENDER
   private baseUrl = 'https://apiinicial.onrender.com';
 
   constructor(
@@ -48,12 +52,52 @@ export class DataService {
   cerrarSesion() {
     this.usuario = '';
     this.invernaderos = [];
+    this.notificaciones = [];
     this.router.navigateByUrl('/login');
   }
 
   // --- DASHBOARD ---
   cargarInvernaderos() {
-    this.http.get<any[]>(`${this.baseUrl}/invernaderos`).subscribe(d => this.invernaderos = d);
+    this.http.get<any[]>(`${this.baseUrl}/invernaderos`).subscribe(d => {
+      this.invernaderos = d;
+      this.verificarAlertas();
+    });
+  }
+
+  // 👇 2. FUNCIÓN MODIFICADA: Respeta el interruptor
+  verificarAlertas() {
+    this.notificaciones = []; // Siempre limpiamos primero
+
+    // Si el usuario desactivó las notificaciones, nos detenemos aquí
+    if (!this.notificacionesActivas) return; 
+
+    this.invernaderos.forEach(inv => {
+      if(inv.sensores) {
+        inv.sensores.forEach((s: any) => {
+          const valor = parseFloat(s.valor);
+          const min = parseFloat(s.min);
+          const max = parseFloat(s.max);
+
+          if (!isNaN(valor)) {
+            if (valor > max) {
+              this.notificaciones.push({
+                titulo: `⚠️ ${s.nombre} Alto`,
+                msg: `${inv.nombre}: ${s.valor} (Max: ${max})`,
+                hora: new Date().toLocaleTimeString().slice(0,5),
+                color: 'danger'
+              });
+            } else if (valor < min) {
+              this.notificaciones.push({
+                titulo: `❄️ ${s.nombre} Bajo`,
+                msg: `${inv.nombre}: ${s.valor} (Min: ${min})`,
+                hora: new Date().toLocaleTimeString().slice(0,5),
+                color: 'warning'
+              });
+            }
+          }
+        });
+      }
+    });
   }
 
   borrarInvernadero(id: any) {
@@ -93,8 +137,6 @@ export class DataService {
   }
 
   // --- DETALLE ---
-
-  // ✅ ESTA ES LA FUNCIÓN QUE TE FALTABA
   cargarUnico(id: any) {
     this.http.get<any>(`${this.baseUrl}/invernaderos/${id}`).subscribe(d => this.invernaderoActual = d);
   }
@@ -128,7 +170,10 @@ export class DataService {
 
             this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual)
               .subscribe({
-                next: () => this.toast('Sensor agregado'),
+                next: () => {
+                  this.toast('Sensor agregado');
+                  this.cargarInvernaderos(); 
+                },
                 error: () => this.invernaderoActual.sensores.pop()
               });
             return true;
@@ -138,35 +183,24 @@ export class DataService {
     });
     await alert.present();
   }
+
   async editarInvernadero() {
     if (!this.invernaderoActual) return;
 
     const alert = await this.alertCtrl.create({
       header: 'Editar Invernadero',
       inputs: [
-        { 
-          name: 'nombre', 
-          type: 'text', 
-          value: this.invernaderoActual.nombre, 
-          placeholder: 'Nombre' 
-        },
-        { 
-          name: 'ubicacion', 
-          type: 'text', 
-          value: this.invernaderoActual.ubicacion, 
-          placeholder: 'Ubicación' 
-        }
+        { name: 'nombre', type: 'text', value: this.invernaderoActual.nombre, placeholder: 'Nombre' },
+        { name: 'ubicacion', type: 'text', value: this.invernaderoActual.ubicacion, placeholder: 'Ubicación' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { 
-          text: 'Guardar', 
+        {
+          text: 'Guardar',
           handler: (d) => {
-            // Actualizamos el objeto local
             this.invernaderoActual.nombre = d.nombre;
             this.invernaderoActual.ubicacion = d.ubicacion;
 
-            // Guardamos en la API
             this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual)
               .subscribe({
                 next: () => this.toast('Información actualizada'),
@@ -197,6 +231,7 @@ export class DataService {
 
             this.http.put(`${this.baseUrl}/invernaderos/${this.invernaderoActual.id}`, this.invernaderoActual).subscribe(() => {
               this.toast('Actualizado');
+              this.cargarInvernaderos(); 
             });
           }
         }
@@ -228,23 +263,14 @@ export class DataService {
     const a = await this.alertCtrl.create({ header: h, message: m, buttons: ['OK'] });
     await a.present();
   }
+
   // --- EDICIÓN DE PERFIL ---
   async editarPerfil() {
     const alert = await this.alertCtrl.create({
       header: 'Editar Perfil',
       inputs: [
-        {
-          name: 'nombre',
-          type: 'text',
-          value: this.usuario, // Pre-llenamos con el dato actual
-          placeholder: 'Tu Nombre'
-        },
-        {
-          name: 'rol',
-          type: 'text',
-          value: this.rol,
-          placeholder: 'Cargo (ej: Supervisor)'
-        }
+        { name: 'nombre', type: 'text', value: this.usuario, placeholder: 'Tu Nombre' },
+        { name: 'rol', type: 'text', value: this.rol, placeholder: 'Cargo' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -255,13 +281,8 @@ export class DataService {
               this.toast('Los campos no pueden estar vacíos');
               return false;
             }
-            // Actualizamos las variables locales
             this.usuario = d.nombre;
             this.rol = d.rol;
-
-            // Opcional: Aquí podrías hacer una petición PUT a tu API para guardar cambios reales
-            // this.http.put(...)
-
             this.toast('Perfil actualizado');
             return true;
           }

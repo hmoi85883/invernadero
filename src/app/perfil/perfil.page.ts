@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+// 👇 1. IMPORTANTE: Agregar FormsModule
+import { FormsModule } from '@angular/forms'; 
 import { DataService } from '../services/data.service';
 import { 
   IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, 
@@ -6,11 +8,10 @@ import {
   IonAvatar, IonBadge, IonList, IonNote, IonToggle 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-// 👇 Importamos TODOS los iconos necesarios
 import { 
   person, personOutline, shieldCheckmarkOutline, 
   mailOutline, logOutOutline, arrowBackOutline, 
-  notificationsOutline, createOutline // <--- ¡ESTE ES EL IMPORTANTE!
+  notificationsOutline, createOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -19,6 +20,7 @@ import {
   styleUrls: ['./perfil.page.scss'],
   standalone: true,
   imports: [
+    FormsModule, // <--- 👇 2. AGREGADO AQUÍ PARA QUE FUNCIONE EL TOGGLE
     IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, 
     IonContent, IonItem, IonLabel, IonButton, IonIcon,
     IonAvatar, IonBadge, IonList, IonNote, IonToggle
@@ -34,7 +36,7 @@ export class PerfilPage {
       'log-out-outline': logOutOutline,
       'arrow-back-outline': arrowBackOutline,
       'notifications-outline': notificationsOutline,
-      'create-outline': createOutline // <--- ¡REGISTRADO AQUÍ!
+      'create-outline': createOutline
     });
   }
 }

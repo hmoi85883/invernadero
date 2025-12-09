@@ -10,7 +10,7 @@
 <ion-content class="ion-padding">
 
   <div class="ion-text-center" style="margin-top: 20px; margin-bottom: 30px;">
-    
+
     <div style="
         width: 110px; 
         height: 110px; 
@@ -28,14 +28,15 @@
 
     <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
       <h2 style="margin: 0; font-size: 24px; font-weight: 700; color: white;">{{ data.usuario }}</h2>
-      
-      <ion-button fill="clear" size="small" (click)="data.editarPerfil()" style="--padding-start: 5px; --padding-end: 5px;">
+
+      <ion-button fill="clear" size="small" (click)="data.editarPerfil()"
+        style="--padding-start: 5px; --padding-end: 5px;">
         <ion-icon name="create-outline" style="color: #666; font-size: 20px;"></ion-icon>
       </ion-button>
     </div>
 
     <p style="margin: 5px 0 0; color: #888; font-size: 14px;">Invernadero Manager</p>
-    
+
     <div style="margin-top: 10px;">
       <ion-badge color="primary" style="padding: 6px 12px; border-radius: 20px; font-weight: 600;">
         {{ data.rol }}
@@ -45,7 +46,7 @@
 
   <div class="premium-card">
     <ion-list style="background: transparent; padding: 0;">
-      
+
       <ion-item lines="full" style="--background: transparent; --border-color: #333;">
         <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
         <ion-label>
@@ -81,13 +82,18 @@
       <ion-item lines="none" style="--background: transparent;">
         <ion-icon name="notifications-outline" slot="start" color="medium"></ion-icon>
         <ion-label style="color: #ddd;">Notificaciones</ion-label>
-        <ion-toggle color="primary" checked slot="end"></ion-toggle>
+
+        <ion-toggle color="primary" slot="end" [(ngModel)]="data.notificacionesActivas"
+          (ionChange)="data.verificarAlertas()">
+        </ion-toggle>
+
       </ion-item>
     </ion-list>
   </div>
 
   <div style="margin-top: 40px;">
-    <ion-button expand="block" color="danger" fill="outline" (click)="data.cerrarSesion()" style="--border-width: 1px; opacity: 0.8; --border-radius: 12px; height: 50px;">
+    <ion-button expand="block" color="danger" fill="outline" (click)="data.cerrarSesion()"
+      style="--border-width: 1px; opacity: 0.8; --border-radius: 12px; height: 50px;">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
       Cerrar Sesión
     </ion-button>

@@ -1,10 +1,30 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title style="font-size: 22px; padding-left: 10px;">Dashboard</ion-title>
+    
     <ion-buttons slot="end">
+      
+      <ion-button (click)="verNotificaciones()" style="position: relative; margin-right: 5px;">
+        <ion-icon name="notifications" color="light" style="font-size: 24px;"></ion-icon>
+        
+        <div *ngIf="data.notificaciones.length > 0" 
+             style="
+               position: absolute; 
+               top: 8px; 
+               right: 8px; 
+               background: var(--ion-color-danger); 
+               border-radius: 50%; 
+               width: 8px; 
+               height: 8px;
+               box-shadow: 0 0 5px red;
+             ">
+        </div>
+      </ion-button>
+
       <ion-button routerLink="/perfil" style="background: #2c2c2c; border-radius: 50%; width: 40px; height: 40px; margin-right: 10px;">
         <ion-icon name="person" color="light"></ion-icon>
       </ion-button>
+      
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
