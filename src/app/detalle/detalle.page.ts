@@ -15,7 +15,8 @@ import {
   arrowBackOutline, chevronForward, barChartOutline, add, pulseOutline,
   settingsOutline 
 } from 'ionicons/icons';
-import Chart from 'chart.js/auto';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-detalle',
